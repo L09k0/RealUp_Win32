@@ -5,7 +5,9 @@
 #include <curl\curl.h>
 #include <cstdio>
 #include <tchar.h>
+#include <iostream>
 #include "Header.h"
+#include "resource.h"
 
 int WINAPI WinMain(
     _In_ HINSTANCE hInstance,
@@ -27,7 +29,7 @@ int WINAPI WinMain(
     wcex.hbrBackground = (HBRUSH)(COLOR_BACKGROUND);
     wcex.lpszMenuName = NULL;
     wcex.lpszClassName = szWindowClass;
-    wcex.hIconSm = LoadIcon(wcex.hInstance, IDI_APPLICATION);
+    wcex.hIconSm = LoadIcon(hInst, MAKEINTRESOURCE(IDI_ICON1));
 
     if (!RegisterClassEx(&wcex))
     {
@@ -48,7 +50,7 @@ int WINAPI WinMain(
         szTitle,
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT,
-        800, 700,
+        600, 200,
         NULL,
         NULL,
         hInstance,
@@ -89,15 +91,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_COMMAND:
         switch (wParam)
         {
-        case CheckClickMenu_1:
+        case ClickExit:
             PostQuitMessage(0);
             break;
         case CheckClickButton_1:
+            GetWindowTextA(DefaultPath, Link_1, TextBufferSize);
             ClickButton();
+            MessageBoxA(hWnd, "Realname update successful!", "Successful", MB_OK);
             break;
+        case CheckClickButton_2:
+            SetWindowTextA(DefaultPath, "c:/Program Files (x86)/Steam/steamapps/common/Half-Life/ag/realnames.txt");
         default:
             break;
         }
+        break;
     case WM_CREATE:
         mainMenu(hWnd);
         Wighets(hWnd);
@@ -116,14 +123,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 void mainMenu(HWND hWnd)
 {
     HMENU MainMemu = CreateMenu();
-    AppendMenu(MainMemu, MF_STRING, CheckClickMenu_1, L"Exit");
+    AppendMenu(MainMemu, MF_STRING, ClickExit, L"Exit");
 
     SetMenu(hWnd, MainMemu);
 }
 
 void Wighets(HWND hWnd)
 {
-    CreateWindowA("button", "click!", WS_VISIBLE | WS_CHILD | ES_CENTER, 5, 30, 120, 30, hWnd, (HMENU)CheckClickButton_1, NULL, NULL);
+    CreateWindowA("button", "Update!", WS_VISIBLE | WS_CHILD | ES_CENTER, 10, 100, 110, 30, hWnd, (HMENU)CheckClickButton_1, NULL, NULL);
+    CreateWindowA("button", "Standard installation path", WS_VISIBLE | WS_CHILD | ES_CENTER, 140, 100, 190, 30, hWnd, (HMENU)CheckClickButton_2, NULL, NULL);
+    CreateWindowA("button", "Exit", WS_VISIBLE | WS_CHILD | ES_CENTER, 370, 100, 110, 30, hWnd, (HMENU)ClickExit, NULL, NULL);
+    CreateWindowA("static", "Выберите папку с игрой(hl/ag)", WS_VISIBLE | WS_CHILD, 5, 5, 250, 30, hWnd, NULL, NULL, NULL);
+    DefaultPath = CreateWindowA("edit", Link_1, WS_VISIBLE | WS_CHILD, 5, 40, 600, 20, hWnd, NULL, NULL, NULL);
 }
 
 size_t DownloadFile(void* ptr, size_t size, size_t nmemb, FILE* stream)
@@ -137,7 +148,7 @@ void ClickButton()
     CURL* curl = curl_easy_init();
     CURLcode object1;
     //FILE* file = fopen("c:/Program Files (x86)/Steam/steamapps/common/Half-Life/ag/realnames.txt", "wb");
-    FILE* file = fopen("c:/realnames.txt", "wb");
+    FILE* file = fopen(Link_1, "wb");
 
     curl_easy_setopt(curl, CURLOPT_URL, "https://raw.githubusercontent.com/execut4ble/realnames/master/realnames.txt");
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, DownloadFile);
