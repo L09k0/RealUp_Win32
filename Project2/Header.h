@@ -1,8 +1,15 @@
 #pragma once
-#define CheckClickMenu_1 1
+#define ClickExit 1
 #define CheckClickButton_1 2
+#define CheckClickButton_2 3
+#define TextBufferSize 100
+
 
 #pragma warning(disable:4996) 
+
+HWND DefaultPath;
+
+char Link_1[TextBufferSize];
 
 static TCHAR szWindowClass[] = _T("DesktopApp");
 
@@ -18,3 +25,5 @@ void Wighets(HWND hWnd);
 
 size_t DownloadFile(void* ptr, size_t size, size_t nmemb, FILE* stream);
 void ClickButton();
+
+
